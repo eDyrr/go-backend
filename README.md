@@ -35,3 +35,30 @@ func main() {
 ```
 
 now that we have the DB's essential part out the way, we can pass to the routing part, for the routing I am used to using `gorilla/mux`, to get this module on the machine, we run `go get -u github.com/gorilla/mux`, basically for the people that dont know, `gorilla/mux` matches incoming http request to resources (handlers), create URLs ...etc.
+
+now that we have `gorilla/mux` installed, we need to create a router, to do so we just have one line of code to write:
+`r := mux.NewRouter()`
+after creating the router, we can attach handler functions to it, where we can have a bunch of endpoints and there's a bunch of functions that get called once a user requests some kind of http request to one of endpoints (resources).
+for example 
+`r.HandleFunc("/", func(w http.ResponseWriter, r* http.Request) {`
+`w.Write([]byte("hello there"))`
+`}).Methods("GET")`
+
+at the end of the main function we listen and serve, passing the router to it by:
+`http.ListenAndServe(":8080", r)`
+the main function should look like this:
+`func main() {`
+`db, err := sql.Open("sqlite", "file:mydb.sqlite?cache=shared")`
+`    if err != nil {`
+`        log.Fatal(err)`
+`    }`
+`
+`
+`    defer db.Close()`
+`
+`
+`    _, err = db.Exec(``CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT)``)``
+`    if err != nil {`
+`        log.Fatal(err)`
+`    }`
+`}`
