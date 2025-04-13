@@ -47,18 +47,46 @@ for example
 at the end of the main function we listen and serve, passing the router to it by:
 `http.ListenAndServe(":8080", r)`
 the main function should look like this:
-`func main() {`
-`db, err := sql.Open("sqlite", "file:mydb.sqlite?cache=shared")`
-`    if err != nil {`
-`        log.Fatal(err)`
-`    }`
-`
-`
-`    defer db.Close()`
-`
-`
-`    _, err = db.Exec(``CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT)``)``
-`    if err != nil {`
-`        log.Fatal(err)`
-`    }`
-`}`
+```
+func main() {
+    db, err := sql.Open("sqlite", "file:mydb.sqlite?cache=shared")
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    defer db.Close()
+
+    _, err = db.Exec(`CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT)`)
+    if err != nil {
+        log.Fatal(err)
+    }
+}
+```
+
+now I think its a fitting moment to talk about the file structure that any of my own standard golang backend project follows:
+
+```
+bookstore-api/
+├── cmd/
+│   └── server/
+│       └── main.go      # Entry point for the application
+├── pkg/
+│   ├── book/
+│   │   ├── handler.go   # HTTP handlers for book-related routes
+│   │   ├── model.go     # Book data model
+│   │   └── service.go   # Business logic for books
+│   ├── database/
+│   │   └── database.go  # Database connection and setup
+│   ├── user/
+│   │   ├── handler.go   # HTTP handlers for user-related routes
+│   │   ├── model.go     # User data model
+│   │   └── service.go   # Business logic for users
+│   └── utils/
+│       └── utils.go     # Utility functions and common helpers
+├── go.mod               # Go module file
+└── go.sum               # Go checksum file
+```
+
+here's a [link](https://www.codingexplorations.com/blog/managing-files-in-a-go-api-folder-structure-best-practices-for-organizing-your-project) to the original article that I got this structure from
+
+I like this structure because its simple and holds related code together.
