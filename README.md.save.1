@@ -56,10 +56,10 @@ func main() {
 
     defer db.Close()
 
-   r := mux.NewRouter()
-   r.HandleFunc("/", Index)
-
-   http.ListenAndServe(":8080", r)
+    _, err = db.Exec(`CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT)`)
+    if err != nil {
+        log.Fatal(err)
+    }
 }
 ```
 
@@ -77,22 +77,25 @@ bookstore-api/
 │   │   └── service.go   # Business logic for books
 │   ├── database/
 │   │   └── database.go  # Database connection and setup
-│   ├── user/
+│   ├── u
 │   │   ├── handler.go   # HTTP handlers for user-related routes
 │   │   ├── model.go     # User data model
 │   │   └── service.go   # Business logic for users
 │   └── utils/
 │       └── utils.go     # Utility functions and common helpers
-├── go.mod               # Go module file
-└── go.sum               # Go checksum file
+├── go.mod               # Go module fileMMMMUmumumum└── go.sum               # Go checksum file
 ```
 
 here's a [link](https://www.codingexplorations.com/blog/managing-files-in-a-go-api-folder-structure-best-practices-for-organizing-your-project) to the original article that I got this structure from
 
 I like this structure because its simple and holds related code together.
 
-Now its time to talk about the frontend side of our application (even though it is not our focus but still), I prefer this more detailed/optimized file structure:
+Now its time to talk about the frontend side of our application, I prefer this updated file structure:
 ```
+.
+├── internal
+│   └── web
+
 .
 ├── cmd
 │   └── server
@@ -108,6 +111,8 @@ Now its time to talk about the frontend side of our application (even though it 
 │       └── main.go
 ├── go.mod
 ├── go.sum
+├── nul
+├── one-more-day.mp4
 ├── pkg
 │   ├── database
 │   │   ├── database.go
@@ -116,26 +121,3 @@ Now its time to talk about the frontend side of our application (even though it 
 │       └── model.go
 └── README.md
 ```
-
-To serve the html files using golang we should use the `html/template` package, now after accessing an endpoint and we wanted to serve an html page, what we do is we first parse the file, then simply execute the template/parsed-file, the following code will accomplish what we need:
-
-```
-r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-    tmpl, err := template.ParseFiles("path/to/file.html")
-    if err != {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
-    }
-
-    tmpl.Execute(w, nil)
-})
-```
-now like most webpages they come styled and unless we add the css styles in the `<style></style>` tags, but if you want to write a `.css` file and call it using the `<link>` tag, it wont work, yet there is a way where we can serve css files, and thats by writing the following code:
-
-```
-staticPath := filepath.Join("internal", "web", "static")
-fs := http.FileServer(http.Dir(staticPath))
-r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
-```
-
-now that the code above is added in the `main()` function the `<link>` tag will work as it should.
